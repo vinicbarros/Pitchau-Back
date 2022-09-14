@@ -63,7 +63,7 @@ app.post("/sign-up", async (req, res) => {
       password: passwordhash,
     });
   } catch (error) {
-    res.status(400).send(error);
+    res.status(404).send(error);
   }
 });
 

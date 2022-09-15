@@ -83,10 +83,11 @@ const postCart = async (req, res) => {
 };
 
 const getCart = async (req, res) => {
+  const user = res.locals.user;
   try {
     const userCartList = await db
       .collection("cart")
-      .find({ _id: user._id })
+      .find({ userId: user._id })
       .toArray();
     return res.status(201).send({ userCartList });
   } catch (error) {

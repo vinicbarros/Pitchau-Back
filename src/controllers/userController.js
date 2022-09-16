@@ -11,7 +11,7 @@ const postSignIn = async (req, res) => {
     const user = await db.collection("users").findOne({ email });
     const isPasswordTrue = bcrypt.compareSync(password, user.password);
     if (!user || !isPasswordTrue) {
-      return res.status(404).send({ message: "Invalid email or password." });
+      return res.status(404).send({ message: "Email ou senha incorretos." });
     }
     const token = uuid();
     await db.collection("sessions").insertOne({
@@ -20,7 +20,7 @@ const postSignIn = async (req, res) => {
     });
     return res.status(202).send({ token });
   } catch (error) {
-    return res.status(400).send({ message: "Invalid email or password." });
+    return res.status(400).send({ message: "Email ou senha incorretos." });
   }
 };
 
@@ -35,9 +35,7 @@ const postSignUp = async (req, res) => {
   const passwordhash = bcrypt.hashSync(password, 12);
 
   if (emailNotAvailable) {
-    return res
-      .status(409)
-      .send({ message: "The email is already been in use." });
+    return res.status(409).send({ message: "O email já está em uso." });
   }
 
   try {
@@ -61,18 +59,22 @@ const postCart = async (req, res) => {
       .collection("products")
       .findOne({ _id: ObjectId(productId) });
     if (!productExists)
-      return res.status(401).send({ message: "Invalid product." });
-
-    const addToCart = await db.collection("cart").insertOne({
-      userId: user._id,
-      productId,
-      name: productExists.nameProduct,
-    });
+      return res.status(401).send({ message: "Produto inválido." });
 
     let price = productExists.price;
     let name = productExists.nameProduct;
     let description = productExists.description;
     let img = productExists.img;
+
+    const addToCart = await db.collection("cart").insertOne({
+      userId: user._id,
+      productId,
+      name,
+      img,
+      description,
+      price,
+    });
+
     return res.status(201).send({
       message: "Product added to cart",
       product: { name, price, description, img },
@@ -95,4 +97,18 @@ const getCart = async (req, res) => {
   }
 };
 
-export { postSignIn, postSignUp, postCart, getCart };
+const deleteUserProductCart = async (req, res) => {
+  const { id } = req.params;
+  const user = res.locals.user;
+
+  try {
+    await db
+      .collection("cart")
+      .deleteOne({ userId: user._id, _id: ObjectId(id) });
+    res.status(200).send({ message: "Item deletado do carrinho." });
+  } catch (error) {
+    res.status(404).send({ message: error });
+  }
+};
+
+export { postSignIn, postSignUp, postCart, getCart, deleteUserProductCart };

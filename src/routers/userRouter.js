@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  deleteUserProductCart,
   getCart,
   postCart,
   postSignIn,
@@ -20,5 +21,7 @@ userRouter.post("/sign-up", signUpMiddleware, postSignUp);
 userRouter.post("/cart", auth, postCart);
 
 userRouter.get("/cart", auth, getCart);
+
+userRouter.delete("/cart/:id", auth, deleteUserProductCart);
 
 export default userRouter;

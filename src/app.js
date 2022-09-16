@@ -15,4 +15,6 @@ app.use(userRouter);
 
 app.use(productsRouter);
 
-app.listen(process.env.PORT);
+app.listen(process.env.PORT, () => {
+  console.log(`Listening on port ${process.env.PORT}`);
+});

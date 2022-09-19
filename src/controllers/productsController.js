@@ -36,4 +36,24 @@ const getProducts = async (req, res) => {
   }
 };
 
-export { postProducts, getProducts };
+const deleteProductsAndSaveBuy = async (req, res) => {
+  const buy = req.body;
+  const user = res.locals.user;
+
+  try {
+    await db.collection("buy").insertOne({
+      name: user.name,
+      method: buy.method,
+      payment: buy.payment,
+      numberCard: buy.numberCard,
+      cvv: buy.cvv,
+      products: buy.products,
+    });
+    res.status(200).send({ message: "Finished buy successfully." });
+  } catch (error) {
+    res.status(404).send({ message: "An error ocurred." });
+  }
+  //
+};
+
+export { postProducts, getProducts, deleteProductsAndSaveBuy };

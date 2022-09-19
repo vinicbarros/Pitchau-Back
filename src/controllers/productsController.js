@@ -41,6 +41,7 @@ const deleteProductsAndSaveBuy = async (req, res) => {
   const user = res.locals.user;
 
   try {
+    await db.collection("cart").deleteMany({ userId: user._id });
     await db.collection("buy").insertOne({
       userId: user._id,
       method: buy.method,

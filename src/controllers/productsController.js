@@ -42,7 +42,7 @@ const deleteProductsAndSaveBuy = async (req, res) => {
 
   try {
     await db.collection("buy").insertOne({
-      name: user.name,
+      userId: user._id,
       method: buy.method,
       payment: buy.payment,
       numberCard: buy.numberCard,
